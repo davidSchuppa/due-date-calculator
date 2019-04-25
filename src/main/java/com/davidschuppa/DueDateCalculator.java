@@ -27,12 +27,17 @@ public class DueDateCalculator {
         return isValidTime && isNotWeekend;
     }
 
-    public void calculateDueDate(LocalDateTime submission, int turnAround) throws SubmissionTimeException, InvalidTurnAroundTimeException {
+    public LocalDateTime calculateDueDate(LocalDateTime submission, int turnAround) throws SubmissionTimeException, InvalidTurnAroundTimeException {
         if (!isSubmitValid(submission)) {
             throw new SubmissionTimeException("Problem only can be reported during working hours, and on workdays");
-        }
-        if (turnAround < 0) {
+        } else if (turnAround < 0) {
             throw new InvalidTurnAroundTimeException("Turnaround time must be a positive integer");
+        } else {
+            if (submission.getHour() + turnAround <= endHour.getHour()) {
+                LocalDateTime dueDate = submission.plusHours(turnAround);
+                return dueDate;
+            }
+            return null;
         }
     }
 }

@@ -58,4 +58,11 @@ class DueDateCalculatorTest {
                 LocalDate.of(2019, 04, 25),
                 LocalTime.of(9, 30)), -3));
     }
+
+    @Test
+    public void calculateDueDateReturnsDueDateIfTurnAroundFitsWorkHours() throws SubmissionTimeException, InvalidTurnAroundTimeException {
+        LocalDate date = LocalDate.of(2019,04,25);
+        LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(13, 48));
+        assertEquals(dateTime.plusHours(2L), calculator.calculateDueDate(dateTime, 2));
+    }
 }
