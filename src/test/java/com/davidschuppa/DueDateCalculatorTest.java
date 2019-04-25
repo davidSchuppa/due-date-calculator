@@ -60,27 +60,52 @@ class DueDateCalculatorTest {
     }
 
     @Test
-    public void calculateDueDateReturnsDueDateIfTurnAroundFitsWorkHours() throws SubmissionTimeException, InvalidTurnAroundTimeException {
+    public void calculateDueDateReturnsDueDateIfTurnAroundFitsWorkHours() {
         LocalDate date = LocalDate.of(2019,4,25);
         LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(13, 48));
-        assertEquals(dateTime.plusHours(2L), calculator.calculateDueDate(dateTime, 2));
+        try {
+            assertEquals(dateTime.plusHours(2L), calculator.calculateDueDate(dateTime, 2));
+        } catch (SubmissionTimeException | InvalidTurnAroundTimeException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
-    public void calculateDueDateReturnsNextDayIfTurnAroundIsMoreThanWorkHours() throws SubmissionTimeException, InvalidTurnAroundTimeException {
+    public void calculateDueDateReturnsNextDayIfTurnAroundIsMoreThanWorkHours() {
         LocalDate date = LocalDate.of(2019,4,25);
         LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(13, 0));
         LocalDateTime expected = LocalDateTime.of(date.plusDays(1), LocalTime.of(13, 0));
 
-        assertEquals(expected, calculator.calculateDueDate(dateTime, 8));
+        try {
+            assertEquals(expected, calculator.calculateDueDate(dateTime, 8));
+        } catch (SubmissionTimeException | InvalidTurnAroundTimeException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
-    public void calculateDueDateAddsPlusDaysAndRemainingHoursIfTurnAroundNotMultipleOfWorkHours() throws SubmissionTimeException, InvalidTurnAroundTimeException {
-        LocalDate date = LocalDate.of(2019,4,25);
+    public void calculateDueDateAddsPlusDaysAndRemainingHoursIfTurnAroundNotMultipleOfWorkHours() {
+        LocalDate date = LocalDate.of(2019,4,22);
         LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(13, 0));
         LocalDateTime expected = LocalDateTime.of(date.plusDays(3), LocalTime.of(10, 0));
 
-        assertEquals(expected, calculator.calculateDueDate(dateTime, 21));
+        try {
+            assertEquals(expected, calculator.calculateDueDate(dateTime, 21));
+        } catch (SubmissionTimeException | InvalidTurnAroundTimeException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void calculateDueDateDoesNotReturnsWeekendPlusDaysAddedFromMonday() {
+        LocalDate date = LocalDate.of(2019,4,25);
+        LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(13, 0));
+        LocalDateTime expected = LocalDateTime.of(LocalDate.of(2019, 4, 29), LocalTime.of(13, 0));
+
+        try {
+            assertEquals(expected, calculator.calculateDueDate(dateTime, 16));
+        } catch (SubmissionTimeException | InvalidTurnAroundTimeException e) {
+            e.printStackTrace();
+        }
     }
 }

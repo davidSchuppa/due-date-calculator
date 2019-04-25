@@ -48,8 +48,21 @@ public class DueDateCalculator {
                     plusHours = plusHours - (endHour.getHour() - submission.getHour());
                     dueDate = dueDate.withHour(9);
                 }
-                return dueDate.plusDays(days).plusHours(plusHours);
+                dueDate = setDueDateToNextWorkDay(dueDate, days);
+                return dueDate.plusHours(plusHours);
+//                return dueDate.plusDays(days).plusHours(plusHours);
             }
+        }
+    }
+
+    public LocalDateTime setDueDateToNextWorkDay(LocalDateTime date, int days) {
+        if ((date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY)) {
+            return setDueDateToNextWorkDay(date.plusDays(1), days);
+        } else {
+            if (days == 0)
+                return date;
+            days--;
+            return setDueDateToNextWorkDay(date.plusDays(1), days);
         }
     }
 
