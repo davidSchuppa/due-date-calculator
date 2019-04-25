@@ -1,4 +1,8 @@
 package com.davidschuppa;
 
-public class SubmissionTimeException {
+public class SubmissionTimeException extends Exception {
+
+    public SubmissionTimeException(String message) {
+        super(message);
+    }
 }

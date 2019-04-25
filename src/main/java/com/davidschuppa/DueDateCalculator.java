@@ -27,4 +27,10 @@ public class DueDateCalculator {
         boolean isNotWeekend = submissionDay != DayOfWeek.SATURDAY && submissionDay != DayOfWeek.SUNDAY;
         return isValidTime && isNotWeekend;
     }
+
+    public void calculateDueDate(LocalDateTime submission, int turnAround) throws SubmissionTimeException {
+        if (!isSubmitValid(submission)) {
+            throw new SubmissionTimeException("Problem only can be reported during working hours, and on workdays");
+        }
+    }
 }
