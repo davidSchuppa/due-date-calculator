@@ -1,14 +1,18 @@
 package com.davidschuppa;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class DueDateCalculator {
 
-    private final LocalTime startHour = LocalTime.of(9,0);
-    private final LocalTime endHour = LocalTime.of(17,0);
+    private LocalTime startHour;
+    private LocalTime endHour;
+
+    public DueDateCalculator(LocalTime startHour, LocalTime endHour) {
+        this.startHour = startHour;
+        this.endHour = endHour;
+    }
 
     /**
      * The method validates the submission time, using LocalTime compareTo method.
