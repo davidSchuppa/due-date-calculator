@@ -21,7 +21,7 @@ public class DueDateCalculator {
      */
     public boolean isSubmitValid(LocalDateTime submission) {
         LocalTime submissionTime = submission.toLocalTime();
-        DayOfWeek submissionDay = submission.toLocalDate().getDayOfWeek();
+        DayOfWeek submissionDay = submission.getDayOfWeek();
         boolean isValidTime = submissionTime.isAfter(startHour) && submissionTime.isBefore(endHour);
         boolean isNotWeekend = submissionDay != DayOfWeek.SATURDAY && submissionDay != DayOfWeek.SUNDAY;
         return isValidTime && isNotWeekend;
@@ -33,11 +33,35 @@ public class DueDateCalculator {
         } else if (turnAround < 0) {
             throw new InvalidTurnAroundTimeException("Turnaround time must be a positive integer");
         } else {
+            LocalDateTime dueDate = submission;
             if (submission.getHour() + turnAround <= endHour.getHour()) {
-                LocalDateTime dueDate = submission.plusHours(turnAround);
-                return dueDate;
+                return dueDate.plusHours(turnAround);
+            } else {
+
+                //full days count from turnAround hours
+                int days = calculateDaysOfTurnaround(turnAround);
+                //remaining plus hours above full days
+                int plusHours = calculateRemainingHours(turnAround);
+
+                if (dueDate.plusHours(plusHours).getHour() > endHour.getHour()) {
+                    days++;
+                    plusHours = plusHours - (endHour.getHour() - submission.getHour());
+                    dueDate = dueDate.withHour(9);
+                }
+                return dueDate.plusDays(days).plusHours(plusHours);
             }
-            return null;
         }
+    }
+
+
+    public int calculateDaysOfTurnaround(int turnAround) {
+        int workHours = endHour.getHour() - startHour.getHour();
+        return turnAround / workHours;
+    }
+
+    public int calculateRemainingHours(int turnAround) {
+        int workHours = endHour.getHour() - startHour.getHour();
+        int remainingHours = turnAround - (turnAround / workHours) * workHours;
+        return remainingHours;
     }
 }
