@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DueDateCalculatorTest {
 
+    private DueDateCalculator calculator = new DueDateCalculator(LocalTime.of(9, 0), LocalTime.of(17, 0));
+
     @Test
     public void smoke() {
         assertTrue(true);
@@ -17,7 +19,6 @@ class DueDateCalculatorTest {
 
     @Test
     public void submitTimeIsNotValidIfEarly() {
-        DueDateCalculator calculator = new DueDateCalculator();
         LocalDateTime submitTime = LocalDateTime.of(LocalDate.of(2019, 4, 25), LocalTime.of(8, 30));
 
         assertFalse(calculator.isSubmitValid(submitTime));
@@ -25,7 +26,6 @@ class DueDateCalculatorTest {
 
     @Test
     public void submitTimeIsNotValidIfLate() {
-        DueDateCalculator calculator = new DueDateCalculator();
         LocalDateTime submitTime = LocalDateTime.of(LocalDate.of(2019, 4, 25), LocalTime.of(17, 30));
 
         assertFalse(calculator.isSubmitValid(submitTime));
@@ -33,7 +33,6 @@ class DueDateCalculatorTest {
 
     @Test
     public void submitTimeIsValidIfItsBetweenWorkingHours() {
-        DueDateCalculator calculator = new DueDateCalculator();
         LocalDateTime submitTime = LocalDateTime.of(LocalDate.of(2019, 4, 25), LocalTime.of(13, 48));
 
         assertTrue(calculator.isSubmitValid(submitTime));
@@ -41,9 +40,15 @@ class DueDateCalculatorTest {
 
     @Test
     public void submitTimeIsNotValidOnWeekends() {
-        DueDateCalculator calculator = new DueDateCalculator();
         LocalDateTime submitTime = LocalDateTime.of(LocalDate.of(2019, 4, 20), LocalTime.of(13, 48));
 
         assertFalse(calculator.isSubmitValid(submitTime));
+    }
+
+    @Test
+    public void calculateDueDateThrowsExceptionIfSubmissionTimeNotValid() {
+        assertThrows(SubmissionTimeException.class, () -> calculator.calculateDueDate(LocalDateTime.of(
+                                                                                        LocalDate.of(2019, 04, 20),
+                                                                                        LocalTime.of(9, 30)), 16));
     }
 }
