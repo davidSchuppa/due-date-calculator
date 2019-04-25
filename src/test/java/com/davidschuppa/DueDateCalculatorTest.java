@@ -22,4 +22,20 @@ class DueDateCalculatorTest {
 
         assertFalse(calculator.isSubmitValid(submitTime));
     }
+
+    @Test
+    public void submitTimeIsNotValidIfLate() {
+        DueDateCalculator calculator = new DueDateCalculator();
+        LocalDateTime submitTime = LocalDateTime.of(LocalDate.of(2019, 4, 25), LocalTime.of(17, 30));
+
+        assertFalse(calculator.isSubmitValid(submitTime));
+    }
+
+    @Test
+    public void submitTimeIsValidIfItsBetweenWorkingHours() {
+        DueDateCalculator calculator = new DueDateCalculator();
+        LocalDateTime submitTime = LocalDateTime.of(LocalDate.of(2019, 4, 25), LocalTime.of(13, 48));
+
+        assertTrue(calculator.isSubmitValid(submitTime));
+    }
 }
