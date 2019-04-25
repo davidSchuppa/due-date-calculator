@@ -27,9 +27,12 @@ public class DueDateCalculator {
         return isValidTime && isNotWeekend;
     }
 
-    public void calculateDueDate(LocalDateTime submission, int turnAround) throws SubmissionTimeException {
+    public void calculateDueDate(LocalDateTime submission, int turnAround) throws SubmissionTimeException, InvalidTurnAroundTimeException {
         if (!isSubmitValid(submission)) {
             throw new SubmissionTimeException("Problem only can be reported during working hours, and on workdays");
+        }
+        if (turnAround < 0) {
+            throw new InvalidTurnAroundTimeException("Turnaround time must be a positive integer");
         }
     }
 }
