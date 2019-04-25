@@ -38,4 +38,12 @@ class DueDateCalculatorTest {
 
         assertTrue(calculator.isSubmitValid(submitTime));
     }
+
+    @Test
+    public void submitTimeIsNotValidOnWeekends() {
+        DueDateCalculator calculator = new DueDateCalculator();
+        LocalDateTime submitTime = LocalDateTime.of(LocalDate.of(2019, 4, 20), LocalTime.of(13, 48));
+
+        assertFalse(calculator.isSubmitValid(submitTime));
+    }
 }
