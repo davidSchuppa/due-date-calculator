@@ -108,4 +108,30 @@ class DueDateCalculatorTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testCalculateDueDateWithDifferentInput() {
+        LocalDate date = LocalDate.of(2019,4,1);
+        LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(16, 0));
+        LocalDateTime expected = LocalDateTime.of(LocalDate.of(2019, 4, 5), LocalTime.of(10, 0));
+
+        try {
+            assertEquals(expected, calculator.calculateDueDate(dateTime, 26));
+        } catch (SubmissionTimeException | InvalidTurnAroundTimeException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testCalculateDueDateWithBiggerInput() {
+        LocalDate date = LocalDate.of(2019,4,1);
+        LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(16, 0));
+        LocalDateTime expected = LocalDateTime.of(LocalDate.of(2019, 4, 15), LocalTime.of(16, 0));
+
+        try {
+            assertEquals(expected, calculator.calculateDueDate(dateTime, 80));
+        } catch (SubmissionTimeException | InvalidTurnAroundTimeException e) {
+            e.printStackTrace();
+        }
+    }
 }
