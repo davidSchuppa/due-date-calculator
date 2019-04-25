@@ -48,7 +48,14 @@ class DueDateCalculatorTest {
     @Test
     public void calculateDueDateThrowsExceptionIfSubmissionTimeNotValid() {
         assertThrows(SubmissionTimeException.class, () -> calculator.calculateDueDate(LocalDateTime.of(
-                                                                                        LocalDate.of(2019, 04, 20),
-                                                                                        LocalTime.of(9, 30)), 16));
+                LocalDate.of(2019, 04, 20),
+                LocalTime.of(9, 30)), 16));
+    }
+
+    @Test
+    public void calculateDueDateThrowsExceptionIfTurnAroundTimeIsNotValid() {
+        assertThrows(InvalidTurnAroundTimeException.class, () -> calculator.calculateDueDate(LocalDateTime.of(
+                LocalDate.of(2019, 04, 25),
+                LocalTime.of(9, 30)), -3));
     }
 }
