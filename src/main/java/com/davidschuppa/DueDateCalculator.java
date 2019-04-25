@@ -4,6 +4,13 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+
+/**
+ * DueDateCalculator helps to calculate the correct due dates for
+ * propblem reports based on the turnaround time given in working hours.
+ * Working hours can be specified in the constructor with a starting and an
+ * ending hour.
+ */
 public class DueDateCalculator {
 
     private LocalTime startHour;
@@ -19,7 +26,7 @@ public class DueDateCalculator {
      * The method checks if the given date is not on a weekend and only return true if its on a workday,
      * holidays are not considered.
      */
-    public boolean isSubmitValid(LocalDateTime submission) {
+    boolean isSubmitValid(LocalDateTime submission) {
         LocalTime submissionTime = submission.toLocalTime();
         DayOfWeek submissionDay = submission.getDayOfWeek();
         boolean isValidTime = submissionTime.isAfter(startHour) && submissionTime.isBefore(endHour);
@@ -27,21 +34,26 @@ public class DueDateCalculator {
         return isValidTime && isNotWeekend;
     }
 
-    public LocalDateTime calculateDueDate(LocalDateTime submission, int turnAround) throws SubmissionTimeException, InvalidTurnAroundTimeException {
+    /**
+     * The method calculates a due date for reported problems from the given arguments
+     * @param submission LocalDateTime of the submission date
+     * @param turnaround turnaround time, given in working hours
+     * @return LocalDateTime of the correct due date
+     * @throws SubmissionTimeException thrown when a report is submitted after or before working hours
+     * @throws InvalidTurnAroundTimeException thrown when turnaround value is invalid
+     */
+    LocalDateTime calculateDueDate(LocalDateTime submission, int turnaround) throws SubmissionTimeException, InvalidTurnAroundTimeException {
         if (!isSubmitValid(submission)) {
-            throw new SubmissionTimeException("Problem only can be reported during working hours, and on workdays");
-        } else if (turnAround < 0) {
+            throw new SubmissionTimeException("Problem can only be reported during working hours, and on workdays");
+        } else if (turnaround < 0) {
             throw new InvalidTurnAroundTimeException("Turnaround time must be a positive integer");
         } else {
             LocalDateTime dueDate = submission;
-            if (submission.getHour() + turnAround <= endHour.getHour()) {
-                return dueDate.plusHours(turnAround);
+            if (submission.getHour() + turnaround <= endHour.getHour()) {
+                return dueDate.plusHours(turnaround);
             } else {
-
-                //full days count from turnAround hours
-                int days = calculateDaysOfTurnaround(turnAround);
-                //remaining plus hours above full days
-                int plusHours = calculateRemainingHours(turnAround);
+                int days = countFullDays(turnaround);
+                int plusHours = countRemainingHours(turnaround);
 
                 if (dueDate.plusHours(plusHours).getHour() > endHour.getHour()) {
                     days++;
@@ -50,12 +62,17 @@ public class DueDateCalculator {
                 }
                 dueDate = setDueDateToNextWorkDay(dueDate, days);
                 return dueDate.plusHours(plusHours);
-//                return dueDate.plusDays(days).plusHours(plusHours);
             }
         }
     }
 
-    public LocalDateTime setDueDateToNextWorkDay(LocalDateTime date, int days) {
+    /**
+     * Method sets the due date recursively, skipping weekends
+     * @param date starting date to count due date from
+     * @param days number of days to add to starting date
+     * @return LocalDateTime due date set to the correct date
+     */
+    private LocalDateTime setDueDateToNextWorkDay(LocalDateTime date, int days) {
         if ((date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY)) {
             return setDueDateToNextWorkDay(date.plusDays(1), days);
         } else {
@@ -66,15 +83,25 @@ public class DueDateCalculator {
         }
     }
 
-
-    public int calculateDaysOfTurnaround(int turnAround) {
+    /**
+     * Helping method to count how many full working days
+     * the turnaround hours give
+     * @param turnAround turnaround time in working hours
+     * @return integer of days
+     */
+    private int countFullDays(int turnAround) {
         int workHours = endHour.getHour() - startHour.getHour();
         return turnAround / workHours;
     }
 
-    public int calculateRemainingHours(int turnAround) {
+    /**
+     * Helping method to count the remaining hours above the
+     * full days given by turnaround time
+     * @param turnAround turnaround time in working hours
+     * @return integer of remaining hours
+     */
+    private int countRemainingHours(int turnAround) {
         int workHours = endHour.getHour() - startHour.getHour();
-        int remainingHours = turnAround - (turnAround / workHours) * workHours;
-        return remainingHours;
+        return turnAround - (turnAround / workHours) * workHours;
     }
 }
