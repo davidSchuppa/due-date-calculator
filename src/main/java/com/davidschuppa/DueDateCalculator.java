@@ -7,7 +7,7 @@ import java.time.LocalTime;
 
 /**
  * DueDateCalculator helps to calculate the correct due dates for
- * propblem reports based on the turnaround time given in working hours.
+ * problem reports based on the turnaround time given in working hours.
  * Working hours can be specified in the constructor with a starting and an
  * ending hour.
  */
@@ -17,6 +17,9 @@ public class DueDateCalculator {
     private LocalTime endHour;
 
     public DueDateCalculator(LocalTime startHour, LocalTime endHour) {
+        if (endHour.isBefore(startHour)) {
+            throw new IllegalArgumentException("Start hour must be before end hour!");
+        }
         this.startHour = startHour;
         this.endHour = endHour;
     }
@@ -36,10 +39,11 @@ public class DueDateCalculator {
 
     /**
      * The method calculates a due date for reported problems from the given arguments
+     *
      * @param submission LocalDateTime of the submission date
      * @param turnaround turnaround time, given in working hours
      * @return LocalDateTime of the correct due date
-     * @throws SubmissionTimeException thrown when a report is submitted after or before working hours
+     * @throws SubmissionTimeException        thrown when a report is submitted after or before working hours
      * @throws InvalidTurnAroundTimeException thrown when turnaround value is invalid
      */
     LocalDateTime calculateDueDate(LocalDateTime submission, int turnaround) throws SubmissionTimeException, InvalidTurnAroundTimeException {
@@ -68,6 +72,7 @@ public class DueDateCalculator {
 
     /**
      * Method sets the due date recursively, skipping weekends
+     *
      * @param date starting date to count due date from
      * @param days number of days to add to starting date
      * @return LocalDateTime due date set to the correct date
@@ -86,6 +91,7 @@ public class DueDateCalculator {
     /**
      * Helping method to count how many full working days
      * the turnaround hours give
+     *
      * @param turnAround turnaround time in working hours
      * @return integer of days
      */
@@ -97,6 +103,7 @@ public class DueDateCalculator {
     /**
      * Helping method to count the remaining hours above the
      * full days given by turnaround time
+     *
      * @param turnAround turnaround time in working hours
      * @return integer of remaining hours
      */
